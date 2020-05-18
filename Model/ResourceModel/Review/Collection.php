@@ -74,6 +74,8 @@ class Collection extends \Magento\Review\Model\ResourceModel\Review\Collection
      * @var \Magento\Store\Model\StoreManagerInterface
      */
     protected $_storeManager;
+    
+    protected $helperData;
 
     /**
      * @param \Magento\Framework\Data\Collection\EntityFactory $entityFactory
@@ -95,11 +97,13 @@ class Collection extends \Magento\Review\Model\ResourceModel\Review\Collection
         \Magento\Review\Model\Rating\Option\VoteFactory $voteFactory,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Framework\DB\Adapter\AdapterInterface $connection = null,
-        \Magento\Framework\Model\ResourceModel\Db\AbstractDb $resource = null
+        \Magento\Framework\Model\ResourceModel\Db\AbstractDb $resource = null,
+        \AMFDev\AMFReview\Helper\Data $helperData
     ) {
         $this->_reviewData = $reviewData;
         $this->_voteFactory = $voteFactory;
         $this->_storeManager = $storeManager;
+        $this->helperData = $helperData;
 
         parent::__construct(
                             $entityFactory,
@@ -121,13 +125,21 @@ class Collection extends \Magento\Review\Model\ResourceModel\Review\Collection
      */
     public function addRateVotes()
     {
+        
+        //AMFDev: if enabled set store ID to default to show all ratings from all stores - had to customise the collection
+        if($this->helperData->getGeneralConfig('show_reviews_from_all_stores')) {
+            $storeId = 0;
+        } else {
+            $storeId = $this->_storeManager->getStore()->getId();
+        }
+        
         foreach ($this->getItems() as $item) {
             $votesCollection = $this->_voteFactory->create()->getResourceCollection()->setReviewFilter(
                 $item->getId()
             )->setStoreFilter(
-                0
+                $storeId
             )->addRatingInfo(
-                0
+                $storeId
             )->load();
             $item->setRatingVotes($votesCollection);
         }

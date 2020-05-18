@@ -30,6 +30,8 @@ class Review extends \Magento\Review\Block\Product\Review
      * @var \Magento\Review\Model\ResourceModel\Review\CollectionFactory
      */
     protected $_reviewsColFactory;
+    
+    protected $helperData;
 
     /**
      * @param \Magento\Framework\View\Element\Template\Context $context
@@ -41,10 +43,13 @@ class Review extends \Magento\Review\Block\Product\Review
         \Magento\Framework\View\Element\Template\Context $context,
         \Magento\Framework\Registry $registry,
         \Magento\Review\Model\ResourceModel\Review\CollectionFactory $collectionFactory,
-        array $data = []
+        array $data = [],
+        \AMFDev\AMFReview\Helper\Data $helperData
     ) {
         $this->_coreRegistry = $registry;
         $this->_reviewsColFactory = $collectionFactory;
+        $this->helperData = $helperData;
+         
         parent::__construct(
                             $context,
                             $registry,
@@ -63,8 +68,16 @@ class Review extends \Magento\Review\Block\Product\Review
      */
     public function getCollectionSize()
     {
+        
+        //AMFDev: if enabled set store ID to count up the number of reviews to show on the PDP Reviews tab
+        if($this->helperData->getGeneralConfig('show_reviews_from_all_stores')) {
+            $storeId = 0;
+        } else {
+            $storeId = $this->_storeManager->getStore()->getId();
+        }
+        
         $collection = $this->_reviewsColFactory->create()->addStoreFilter(
-            0  //AMFDev: changed from $this->_storeManager->getStore()->getId()
+            $storeId 
         )->addStatusFilter(
             \Magento\Review\Model\Review::STATUS_APPROVED
         )->addEntityFilter(

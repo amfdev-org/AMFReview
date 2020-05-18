@@ -19,15 +19,6 @@ use Magento\Store\Api\StoreRepositoryInterface;
  */
 class ReviewRenderer extends \Magento\Review\Block\Product\ReviewRenderer
 {
-      /**
-     * Array of available template name
-     *
-     * @var array
-     */
-    protected $_availableTemplates = [
-        self::FULL_VIEW => 'Magento_Review::helper/summary.phtml',
-        self::SHORT_VIEW => 'Magento_Review::helper/summary_short.phtml',
-    ];
 
     /**
      * Review model factory
@@ -43,6 +34,8 @@ class ReviewRenderer extends \Magento\Review\Block\Product\ReviewRenderer
     
     public $_storeRepositoryInterface;
 
+    protected $helperData;
+    
     /**
      * @param \Magento\Framework\View\Element\Template\Context $context
      * @param \Magento\Review\Model\ReviewFactory $reviewFactory
@@ -54,12 +47,14 @@ class ReviewRenderer extends \Magento\Review\Block\Product\ReviewRenderer
         \Magento\Review\Model\ReviewFactory $reviewFactory,
         array $data = [],
         ReviewSummaryFactory $reviewSummaryFactory = null,
-        \Magento\Store\Api\StoreRepositoryInterface $storeRepositoryInterface
+        \Magento\Store\Api\StoreRepositoryInterface $storeRepositoryInterface,
+        \AMFDev\AMFReview\Helper\Data $helperData
     ) {
         $this->_reviewFactory = $reviewFactory;
         $this->reviewSummaryFactory = $reviewSummaryFactory ??
             ObjectManager::getInstance()->get(ReviewSummaryFactory::class);
         $this->_storeRepositoryInterface = $storeRepositoryInterface;
+        $this->helperData = $helperData;
         parent::__construct(
                             $context,
                             $reviewFactory,
@@ -83,17 +78,16 @@ class ReviewRenderer extends \Magento\Review\Block\Product\ReviewRenderer
         \Magento\Catalog\Model\Product $product,
         $templateType = self::DEFAULT_VIEW,
         $displayIfNoReviews = false
-    ) {
-                  
-        //get all stores except admin, since we want to include all reviews
-        //NOT USING FOR NOW
-        /*$storesList = $this->_storeRepositoryInterface->getList();
-        foreach ($storesList as $store) {
-            if($store->getId() != 0) {
-                $storeIds[] = $store->getId();
-            }
-        }*/
- 
+    ) 
+        
+    {
+        //AMFDev: if enabled, set storeID to default to capture all reviews
+        if($this->helperData->getGeneralConfig('show_reviews_from_all_stores')) {
+            $storeId = 0;
+        } else {
+            $storeId = $this->_storeManager->getStore()->getId();
+        }  
+                          
         /* AMFDev: added check for zero value:
             see the observer at: module-review/Observer/CatalogProductListCollectionAppendSummaryFieldsObserver.php
             which uses method: module-review/Model/ResourceModel/Review/Summary.php
@@ -104,7 +98,7 @@ class ReviewRenderer extends \Magento\Review\Block\Product\ReviewRenderer
         if ($product->getRatingSummary() === null || $product->getRatingSummary() == 0) { // AMFDev: previously: $product->getRatingSummary() === null
             $this->reviewSummaryFactory->create()->appendSummaryDataToObject(
                 $product,
-                0
+                $storeId
             );
         }
 
@@ -127,44 +121,6 @@ class ReviewRenderer extends \Magento\Review\Block\Product\ReviewRenderer
    
     }
     
-    /**
-     * Get ratings summary
-     *
-     * @return string
-     */
-    public function getRatingSummary()
-    {
-        return $this->getProduct()->getRatingSummary();
-    }
-
-    /**
-     * Get count of reviews
-     *
-     * @return int
-     */
-    public function getReviewsCount()
-    {
-        return $this->getProduct()->getReviewsCount();
-    }
-
-    /**
-     * Get review product list url
-     *
-     * @param bool $useDirectLink allows to use direct link for product reviews page
-     * @return string
-     */
-    public function getReviewsUrl($useDirectLink = false)
-    {
-        $product = $this->getProduct();
-        if ($useDirectLink) {
-            return $this->getUrl(
-                'review/product/list',
-                ['id' => $product->getId(), 'category' => $product->getCategoryId()]
-            );
-        }
-        return $product->getUrlModel()->getUrl($product, ['_ignore_category' => true]);
-    }
-
 
  
 }

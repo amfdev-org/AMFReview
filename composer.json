@@ -1,6 +1,6 @@
 {
   "name": "amfdev/amfreview",
-  "description": "A Magento 2.3.x extension that allows product reviews to be shown for all stores in the system, and allows reviews to be automatically approved and published",
+  "description": "A Magento 2.3.x extension of Magento's Review module. Allows all reviews for a product to be shown regardless of which website or store the review was placed. Allows reviews to be automatically approved and published.",
   "type": "magento2-module",
   "version": "1.0.0",
   "license": [

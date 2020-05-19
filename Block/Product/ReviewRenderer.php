@@ -103,7 +103,7 @@ class ReviewRenderer extends \Magento\Review\Block\Product\ReviewRenderer
         }
 
         // AMFDev: see previous comment, same applies here
-        if ((null === $product->getRatingSummary() || $product->getRatingSummary() == 0) && !$displayIfNoReviews) { // AMFDev: previously: $product->getRatingSummary() === null
+        if ((null === $product->getRatingSummary() || $product->getRatingSummary() == 0) && !$displayIfNoReviews) { // AMFDev: previously: $product->getRatingSummary() === null && !$displayIfNoReviews
             return '';
         }
         

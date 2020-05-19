@@ -4,6 +4,7 @@
         <amfreview>
             <general>
                 <show_reviews_from_all_stores>0</show_reviews_from_all_stores>
+                <automatically_approve_reviews>0</automatically_approve_reviews>
             </general>
         </amfreview>
     </default>

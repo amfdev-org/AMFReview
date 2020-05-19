@@ -1,6 +1,6 @@
 {
   "name": "amfdev/amfreview",
-  "description": "A Magento 2 module that gives more control over product reviews",
+  "description": "A Magento 2.3.x module that gives more control over product reviews",
   "type": "magento2-module",
   "version": "1.0.0",
   "license": [

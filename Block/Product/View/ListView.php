@@ -20,7 +20,8 @@ class ListView extends \Magento\Review\Block\Product\View\ListView
         protected $helperData;
     
         //AMFDev: there is no constructor in \Magento\Review\Block\Product\View\ListView
-        //and I needed to add the helper function, so this is effectively grandparent::construct
+        //so this is effectively grandparent::construct (on \Magento\Review\Block\Product\View)
+        //in order to add our helper function
         
         public function __construct(
         \Magento\Catalog\Block\Product\Context $context,

@@ -15,7 +15,12 @@
                     <label>Show Reviews From All Stores</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment>Show every review for a product, regardless of website or store.</comment>
-                </field>             
+                </field>
+                <field id="automatically_approve_reviews" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Automatically Approve Reviews</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Warning! Product reviews will be published immediately.</comment>
+                </field> 
             </group>
         </section>
     </system>

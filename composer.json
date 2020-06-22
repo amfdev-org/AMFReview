@@ -13,10 +13,16 @@
     "magento/module-review": ">=100.3.0"
   },
   "autoload": {
-    "files": [ "registration.php" ]
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "AMFDev\\AMFReview\\": ""
+        }
   },
    "repositories": [
         {"type": "composer", "url": "https://repo.packagist.com/amfdev-org/"},
         {"packagist.org": false}
-    ]
+    ],
+    "version": "1.0.0"
 }
